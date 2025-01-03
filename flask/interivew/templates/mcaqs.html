@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generated MCQs</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #74c8ec, #93b6f2);
+            color: #fff;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .navbar {
+            background-color: #343a40;
+            padding: 10px 20px;
+        }
+        .navbar-brand, .navbar-nav .nav-link {
+            color: #fff !important;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #007bff !important;
+        }
+        .container {
+            margin-top: 100px;
+        }
+        .card {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .card-body {
+            background-color: #fff;
+            color: #333;
+            border-radius: 10px;
+        }
+        .btn-primary {
+            background-color: #08e443;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #c3d2ed;
+        }
+        .correct-answer {
+            display: none;
+            font-weight: bold;
+            color: #28a745;
+        }
+        h1 {
+            font-weight: bold;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+        <a class="navbar-brand" href="#">MCQ Generator</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="http://127.0.0.1:8000/r/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/">Questions Generate</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/mock">AI Voice Assistant</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Start of content -->
+    <div class="container">
+        <h1 class="text-center mb-4">Generated MCQs</h1>
+        <div id="mcqs-container">
+            {% for index, mcq in mcqs %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Q{{ index }}: {{ mcq[0] }}?</h5>
+                        <form>
+                            {% set options = ['A', 'B', 'C', 'D'] %}
+                            {% set num_choices = mcq[1]|length %}
+                            {% for choice_index in range(num_choices) %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="answer{{ index }}" id="choice{{ index }}{{ choice_index }}" value="{{ choice_index }}">
+                                    <label class="form-check-label" for="choice{{ index }}{{ choice_index }}">
+                                        {{ options[choice_index] }}: {{ mcq[1][choice_index] }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </form>
+                        <!-- Display the correct answer with a class -->
+                        <small class="correct-answer">Correct Answer: {{ mcq[2] }}</small>
+                    </div>
+                </div>
+            {% endfor %}
+            <!-- Button to show results -->
+            <button id="show-results-btn" class="btn btn-primary btn-block">Show Results</button>
+        </div>
+    </div>
+    <!-- End of content -->
+
+    <!-- Footer -->
+    
+
+    <!-- JavaScript to handle showing results -->
+    <script>
+        document.getElementById('show-results-btn').addEventListener('click', function() {
+            // Get all elements with the 'correct-answer' class
+            var correctAnswers = document.getElementsByClassName('correct-answer');
+            // Loop through each element and display it
+            for (var i = 0; i < correctAnswers.length; i++) {
+                correctAnswers[i].style.display = 'block';
+            }
+            // Hide the button after showing results
+            this.style.display = 'none';
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate MCQs</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            color: #fff;
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .navbar {
+            background-color: #343a40;
+            padding: 10px 20px;
+        }
+        .navbar-brand, .navbar-nav .nav-link {
+            color: #fff !important;
+        }
+        .navbar-nav .nav-link:hover {
+            color: #007bff !important;
+        }
+        .container {
+            margin-top: 80px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            color: #333;
+        }
+        h1 {
+            font-weight: bold;
+            color: #6a11cb;
+        }
+        .form-group label {
+            font-weight: bold;
+        }
+        select, input[type="file"] {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #6a11cb;
+            border-color: #6a11cb;
+        }
+        button:hover {
+            background-color: #2575fc;
+            border-color: #2575fc;
+        }
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <a class="navbar-brand" href="#">MCQ Generator</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="http://127.0.0.1:8000/r/">Home</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/">Questions Generate</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/mock">AI Voice Assistant</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Content Section -->
+<div class="container">
+    
+    <h1 class="mb-4">Generate MCQs</h1>
+    <p class="lead">This application generates multiple-choice questions (MCQs) based on the provided text. You can either upload a PDF or TXT file containing the text.</p>
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group mt-4">
+            <label for="file">Upload File(s) (PDF or TXT)</label>
+            <input type="file" class="form-control-file" id="file" name="files[]" multiple>
+        </div>
+        <div class="form-group">
+            <label for="num_questions">Number of Questions:</label>
+            <select class="form-control" id="num_questions" name="num_questions">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Generate MCQs</button>
+    </form>
+    
+</div>
+
+<!-- Footer -->
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.4.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and General Styles */
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+        }
+
+        a {
+            text-decoration: none;
+            color: white;
+        }
+
+        a:hover {
+            color: #f4f4f9;
+        }
+
+        /* Navbar Styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            padding: 10px 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-links a {
+            font-size: 1rem;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Container Styles */
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: #8e44ad;
+        }
+
+        .mic-wrapper {
+            margin: 20px 0;
+        }
+
+        .mic-btn {
+            background: linear-gradient(135deg, #8e44ad, #3498db);
+            color: white;
+            font-size: 2rem;
+            padding: 20px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+            outline: none;
+        }
+
+        .mic-btn:hover {
+            background: linear-gradient(135deg, #3498db, #8e44ad);
+        }
+
+        .mic-btn:active {
+            transform: scale(0.95);
+        }
+
+        #response-text {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #444;
+        }
+
+        #conversation-history {
+            margin-top: 20px;
+            font-size: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            text-align: left;
+        }
+
+        .history-entry {
+            margin-bottom: 15px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: #f7f7f7;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-input {
+            font-weight: bold;
+            color: #3498db;
+        }
+
+        .ai-response {
+            margin-top: 5px;
+            color: #8e44ad;
+        }
+
+        /* Scrollbar customization */
+        #conversation-history::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #conversation-history::-webkit-scrollbar-thumb {
+            background: #8e44ad;
+            border-radius: 10px;
+        }
+
+        #conversation-history::-webkit-scrollbar-thumb:hover {
+            background: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-logo">AI Voice Assistant</div>
+        <div class="nav-links">
+            <a href="http://127.0.0.1:8000/r/">Home</a>
+            <a href="/">Questions Generate</a>
+            <a href="/mock">AI Voice Assistant</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>AI Voice Assistant</h1>
+        <div class="mic-wrapper">
+            <button id="start-record-btn" class="mic-btn">🎤</button>
+        </div>
+        <div id="response-text">Press the button and start speaking...</div>
+
+        <div id="conversation-history">
+            <!-- Conversation history dynamically updated here -->
+        </div>
+    </div>
+
+<script>
+    const startRecordBtn = document.getElementById('start-record-btn');
+    const responseText = document.getElementById('response-text');
+    const conversationHistory = document.getElementById('conversation-history');
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+
+    recognition.onstart = function() {
+        responseText.innerHTML = 'Listening...';
+    };
+
+    recognition.onspeechend = function() {
+        recognition.stop();
+    };
+
+    recognition.onresult = function(event) {
+        const userInput = event.results[0][0].transcript;
+        responseText.innerHTML = `You said: "${userInput}"`;
+
+        // Send user input to Flask server
+        fetch('/process_voice', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ user_input: userInput }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            const aiResponse = data.response;
+            responseText.innerHTML = `AI Response: "${aiResponse}"`;
+
+            // Update conversation history with both user input and AI response
+            updateConversationHistory(data.conversation_history);
+
+            speakResponse(aiResponse);
+        })
+        .catch(error => {
+            responseText.innerHTML = 'Error processing request.';
+        });
+    };
+
+    startRecordBtn.addEventListener('click', () => {
+        recognition.start();
+    });
+
+    // Update the conversation history section
+    function updateConversationHistory(history) {
+        conversationHistory.innerHTML = '';  // Clear existing history
+
+        history.forEach(entry => {
+            const historyEntry = document.createElement('div');
+            historyEntry.classList.add('history-entry');
+
+            const userInput = document.createElement('div');
+            userInput.classList.add('user-input');
+            userInput.innerHTML = `You: ${entry.user}`;
+
+            const aiResponse = document.createElement('div');
+            aiResponse.classList.add('ai-response');
+            aiResponse.innerHTML = `AI: ${entry.ai}`;
+
+            historyEntry.appendChild(userInput);
+            historyEntry.appendChild(aiResponse);
+
+            conversationHistory.appendChild(historyEntry);
+        });
+    }
+
+    // Use the SpeechSynthesis API to speak the AI response
+    function speakResponse(text) {
+        const synth = window.speechSynthesis;
+        const utterance = new SpeechSynthesisUtterance(text);
+        synth.speak(utterance);
+    }
+</script>
+</html>
+
